@@ -22,6 +22,7 @@
 "              and prompt for a pattern with which to replace it.
 "<Leader>vR - Like vr, but match whole word.
 
+" 如果要使用ag进行更快速的全局搜索，必须安装 apt-get install silversearcher-ag 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 通用设置
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -320,6 +321,8 @@ Plugin 'suan/vim-instant-markdown'
 Plugin 'lilydjwg/fcitx.vim'
 
 Plugin 'EasyGrep'
+Plugin 'rking/ag.vim'
+Plugin 'mileszs/ack.vim'
 
 call vundle#end()            
 filetype plugin indent on    
@@ -506,7 +509,18 @@ nnoremap <C-P> :bp<CR>
 let g:ctrlp_map = '<c-o>'
 let g:ctrlp_cmd = ':CtrlP'
 let g:ctrlp_working_path_mode = '0'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.png,*.jpg,*.jpeg,*.gif,*.o,*.d " MacOSX/Linux
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+
+" ctrlp 默认用grep搜索，这里用ag替代
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+  " Use ag in CtrlP for listing files.
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  " Ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
 
 
 
@@ -732,6 +746,15 @@ let g:EasyGrepJumpToMatch = 1 "跳转第一个..
 let g:EasyGrepInvertWholeWord = 1 "搜索整个单词
 let g:EasyGrepFileAssociationsInExplorer = 1   "文件中显示关系表
 let g:EasyGrepReplaceWindowMode = 1 "全局代替时，执行当前窗口与下一个窗口拆分
+" >>
+
+
+
+" <<
+" Ack.vim 是Ack的Vim插件，通过Quickfix来提供搜索结果。 
+" 但它允许用户定义外部程序，所以我们可以用它来显示Ag的搜索结果。
+let g:ackprg = 'ag --nogroup --nocolor --column'
+map <c-u> :Ack<space>
 " >>
 
 
